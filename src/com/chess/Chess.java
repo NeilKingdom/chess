@@ -407,9 +407,8 @@ public class Chess implements Rules {
                         playerState = setState.get(selectedPlayer);
                         lastPlayerSelected = selectedPlayer[j];
                         refresh();
-                        String s = (whitesTurn) ? "White" : "Black";
                         String p = parentName.get(playerState);
-                        System.out.println(s + " selected " + p + " at: " + coorX + coorY + "\n");
+                        System.out.println("Selected " + p + " at: " + coorX + coorY + "\n");
                         swapIcon();
                     }
                     else
