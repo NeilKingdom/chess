@@ -1,24 +1,27 @@
 package com.chess;
-import java.lang.*;
-import javax.imageio.ImageIO;
-import java.io.*;
-import java.util.Arrays;
-import java.util.HashMap;
 import javax.swing.*;
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.*;
+import java.lang.*;
+import java.util.Arrays;
+import java.util.HashMap;
 
 //TODO
-//Clean code: Namely, I hate the large switch statements, hard-to-read HashMaps, constructor and method structure
-//Whilst selecting player on same team, "I'm not your enemy" text still appears
-//Ensure that window cannot be resized under a certain limit
+//Clean code: Namely, I hate the hard-to-read HashMaps, constructor and method structure
 
-public class Chess implements MouseListener, KeyListener, Rules {
+/**
+ * A simple game of chess created by Neil Kingdom using the java.awt and javax.swing libraries
+ * @author Neil Kingdom
+ * @version 1.0
+ * @since 2020-07-09
+ */
+public class Chess implements Rules {
 
     private JFrame jf;
     private GridBagConstraints gbc;
     private DrawCanvas canvas;
-    private Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
     private HashMap<JLabel[], Integer> setState;
     private HashMap<Integer, JLabel[]> parentLabel;
     private HashMap<Integer, String> parentName;
@@ -26,38 +29,39 @@ public class Chess implements MouseListener, KeyListener, Rules {
     private String coorX;
     private boolean isValid, whitesTurn, promoting;
     private int coorY, clickX, clickY, tileWidth, tileHeight, playerState, nextNull;
+    private Image background;
+    private Image[] allBackgrounds;
+    private static final Dimension SCREEN_SIZE = Toolkit.getDefaultToolkit().getScreenSize();
 
-    private ImageIcon wPawnICO = new ImageIcon(getImageAsStream("/com/resources/images/WhitePawn.png").getScaledInstance(screenSize.width/32, screenSize.width/32, Image.SCALE_SMOOTH));
-    private ImageIcon bPawnICO = new ImageIcon(getImageAsStream("/com/resources/images/BlackPawn.png").getScaledInstance(screenSize.width/32, screenSize.width/32, Image.SCALE_SMOOTH));
-    private ImageIcon wBishopICO = new ImageIcon(getImageAsStream("/com/resources/images/WhiteBishop.png").getScaledInstance(screenSize.width/32, screenSize.width/32, Image.SCALE_SMOOTH));
-    private ImageIcon bBishopICO = new ImageIcon(getImageAsStream("/com/resources/images/BlackBishop.png").getScaledInstance(screenSize.width/32, screenSize.width/32, Image.SCALE_SMOOTH));
-    private ImageIcon wRookICO = new ImageIcon(getImageAsStream("/com/resources/images/WhiteRook.png").getScaledInstance(screenSize.width/32, screenSize.width/32, Image.SCALE_SMOOTH));
-    private ImageIcon bRookICO = new ImageIcon(getImageAsStream("/com/resources/images/BlackRook.png").getScaledInstance(screenSize.width/32, screenSize.width/32, Image.SCALE_SMOOTH));
-    private ImageIcon wKnightICO = new ImageIcon(getImageAsStream("/com/resources/images/WhiteKnight.png").getScaledInstance(screenSize.width/32, screenSize.width/32, Image.SCALE_SMOOTH));
-    private ImageIcon bKnightICO = new ImageIcon(getImageAsStream("/com/resources/images/BlackKnight.png").getScaledInstance(screenSize.width/32, screenSize.width/32, Image.SCALE_SMOOTH));
-    private ImageIcon wQueenICO = new ImageIcon(getImageAsStream("/com/resources/images/WhiteQueen.png").getScaledInstance(screenSize.width/32, screenSize.width/32, Image.SCALE_SMOOTH));
-    private ImageIcon bQueenICO = new ImageIcon(getImageAsStream("/com/resources/images/BlackQueen.png").getScaledInstance(screenSize.width/32, screenSize.width/32, Image.SCALE_SMOOTH));
-    private ImageIcon wKingICO = new ImageIcon(getImageAsStream("/com/resources/images/WhiteKing.png").getScaledInstance(screenSize.width/32, screenSize.width/32, Image.SCALE_SMOOTH));
-    private ImageIcon bKingICO = new ImageIcon(getImageAsStream("/com/resources/images/BlackKing.png").getScaledInstance(screenSize.width/32, screenSize.width/32, Image.SCALE_SMOOTH));
-    private ImageIcon nullTileICO = new ImageIcon(getImageAsStream("/com/resources/images/Blank.png").getScaledInstance(screenSize.width/32, screenSize.width/32, Image.SCALE_SMOOTH));
+    //Default Icons
+    private ImageIcon wPawnICO = new ImageIcon(getImageAsStream("/com/resources/images/WhitePawn.png").getScaledInstance(SCREEN_SIZE.width/32, SCREEN_SIZE.width/32, Image.SCALE_SMOOTH));
+    private ImageIcon bPawnICO = new ImageIcon(getImageAsStream("/com/resources/images/BlackPawn.png").getScaledInstance(SCREEN_SIZE.width/32, SCREEN_SIZE.width/32, Image.SCALE_SMOOTH));
+    private ImageIcon wBishopICO = new ImageIcon(getImageAsStream("/com/resources/images/WhiteBishop.png").getScaledInstance(SCREEN_SIZE.width/32, SCREEN_SIZE.width/32, Image.SCALE_SMOOTH));
+    private ImageIcon bBishopICO = new ImageIcon(getImageAsStream("/com/resources/images/BlackBishop.png").getScaledInstance(SCREEN_SIZE.width/32, SCREEN_SIZE.width/32, Image.SCALE_SMOOTH));
+    private ImageIcon wRookICO = new ImageIcon(getImageAsStream("/com/resources/images/WhiteRook.png").getScaledInstance(SCREEN_SIZE.width/32, SCREEN_SIZE.width/32, Image.SCALE_SMOOTH));
+    private ImageIcon bRookICO = new ImageIcon(getImageAsStream("/com/resources/images/BlackRook.png").getScaledInstance(SCREEN_SIZE.width/32, SCREEN_SIZE.width/32, Image.SCALE_SMOOTH));
+    private ImageIcon wKnightICO = new ImageIcon(getImageAsStream("/com/resources/images/WhiteKnight.png").getScaledInstance(SCREEN_SIZE.width/32, SCREEN_SIZE.width/32, Image.SCALE_SMOOTH));
+    private ImageIcon bKnightICO = new ImageIcon(getImageAsStream("/com/resources/images/BlackKnight.png").getScaledInstance(SCREEN_SIZE.width/32, SCREEN_SIZE.width/32, Image.SCALE_SMOOTH));
+    private ImageIcon wQueenICO = new ImageIcon(getImageAsStream("/com/resources/images/WhiteQueen.png").getScaledInstance(SCREEN_SIZE.width/32, SCREEN_SIZE.width/32, Image.SCALE_SMOOTH));
+    private ImageIcon bQueenICO = new ImageIcon(getImageAsStream("/com/resources/images/BlackQueen.png").getScaledInstance(SCREEN_SIZE.width/32, SCREEN_SIZE.width/32, Image.SCALE_SMOOTH));
+    private ImageIcon wKingICO = new ImageIcon(getImageAsStream("/com/resources/images/WhiteKing.png").getScaledInstance(SCREEN_SIZE.width/32, SCREEN_SIZE.width/32, Image.SCALE_SMOOTH));
+    private ImageIcon bKingICO = new ImageIcon(getImageAsStream("/com/resources/images/BlackKing.png").getScaledInstance(SCREEN_SIZE.width/32, SCREEN_SIZE.width/32, Image.SCALE_SMOOTH));
+    private ImageIcon nullTileICO = new ImageIcon(getImageAsStream("/com/resources/images/Blank.png").getScaledInstance(SCREEN_SIZE.width/32, SCREEN_SIZE.width/32, Image.SCALE_SMOOTH));
 
-    private ImageIcon wPawnSelICO = new ImageIcon(getImageAsStream("/com/resources/images/WPawnSelect.png").getScaledInstance(screenSize.width/32, screenSize.width/32, Image.SCALE_SMOOTH));
-    private ImageIcon bPawnSelICO = new ImageIcon(getImageAsStream("/com/resources/images/BPawnSelect.png").getScaledInstance(screenSize.width/32, screenSize.width/32, Image.SCALE_SMOOTH));
-    private ImageIcon wBishopSelICO = new ImageIcon(getImageAsStream("/com/resources/images/WBishopSelect.png").getScaledInstance(screenSize.width/32, screenSize.width/32, Image.SCALE_SMOOTH));
-    private ImageIcon bBishopSelICO = new ImageIcon(getImageAsStream("/com/resources/images/BBishopSelect.png").getScaledInstance(screenSize.width/32, screenSize.width/32, Image.SCALE_SMOOTH));
-    private ImageIcon wRookSelICO = new ImageIcon(getImageAsStream("/com/resources/images/WRookSelect.png").getScaledInstance(screenSize.width/32, screenSize.width/32, Image.SCALE_SMOOTH));
-    private ImageIcon bRookSelICO = new ImageIcon(getImageAsStream("/com/resources/images/BRookSelect.png").getScaledInstance(screenSize.width/32, screenSize.width/32, Image.SCALE_SMOOTH));
-    private ImageIcon wKnightSelICO = new ImageIcon(getImageAsStream("/com/resources/images/WKnightSelect.png").getScaledInstance(screenSize.width/32, screenSize.width/32, Image.SCALE_SMOOTH));
-    private ImageIcon bKnightSelICO = new ImageIcon(getImageAsStream("/com/resources/images/BKnightSelect.png").getScaledInstance(screenSize.width/32, screenSize.width/32, Image.SCALE_SMOOTH));
-    private ImageIcon wQueenSelICO = new ImageIcon(getImageAsStream("/com/resources/images/WQueenSelect.png").getScaledInstance(screenSize.width/32, screenSize.width/32, Image.SCALE_SMOOTH));
-    private ImageIcon bQueenSelICO = new ImageIcon(getImageAsStream("/com/resources/images/BQueenSelect.png").getScaledInstance(screenSize.width/32, screenSize.width/32, Image.SCALE_SMOOTH));
-    private ImageIcon wKingSelICO = new ImageIcon(getImageAsStream("/com/resources/images/WKingSelect.png").getScaledInstance(screenSize.width/32, screenSize.width/32, Image.SCALE_SMOOTH));
-    private ImageIcon bKingSelICO = new ImageIcon(getImageAsStream("/com/resources/images/BKingSelect.png").getScaledInstance(screenSize.width/32, screenSize.width/32, Image.SCALE_SMOOTH));
-    private ImageIcon logoICO = new ImageIcon(getImageAsStream("/com/resources/images/ChessLogo.png").getScaledInstance(screenSize.width/3, screenSize.width/4, Image.SCALE_SMOOTH));
-
-    //Backgrounds
-    protected Image background;
-    protected Image[] allBackgrounds;
+    //Selected Icons
+    private ImageIcon wPawnSelICO = new ImageIcon(getImageAsStream("/com/resources/images/WPawnSelect.png").getScaledInstance(SCREEN_SIZE.width/32, SCREEN_SIZE.width/32, Image.SCALE_SMOOTH));
+    private ImageIcon bPawnSelICO = new ImageIcon(getImageAsStream("/com/resources/images/BPawnSelect.png").getScaledInstance(SCREEN_SIZE.width/32, SCREEN_SIZE.width/32, Image.SCALE_SMOOTH));
+    private ImageIcon wBishopSelICO = new ImageIcon(getImageAsStream("/com/resources/images/WBishopSelect.png").getScaledInstance(SCREEN_SIZE.width/32, SCREEN_SIZE.width/32, Image.SCALE_SMOOTH));
+    private ImageIcon bBishopSelICO = new ImageIcon(getImageAsStream("/com/resources/images/BBishopSelect.png").getScaledInstance(SCREEN_SIZE.width/32, SCREEN_SIZE.width/32, Image.SCALE_SMOOTH));
+    private ImageIcon wRookSelICO = new ImageIcon(getImageAsStream("/com/resources/images/WRookSelect.png").getScaledInstance(SCREEN_SIZE.width/32, SCREEN_SIZE.width/32, Image.SCALE_SMOOTH));
+    private ImageIcon bRookSelICO = new ImageIcon(getImageAsStream("/com/resources/images/BRookSelect.png").getScaledInstance(SCREEN_SIZE.width/32, SCREEN_SIZE.width/32, Image.SCALE_SMOOTH));
+    private ImageIcon wKnightSelICO = new ImageIcon(getImageAsStream("/com/resources/images/WKnightSelect.png").getScaledInstance(SCREEN_SIZE.width/32, SCREEN_SIZE.width/32, Image.SCALE_SMOOTH));
+    private ImageIcon bKnightSelICO = new ImageIcon(getImageAsStream("/com/resources/images/BKnightSelect.png").getScaledInstance(SCREEN_SIZE.width/32, SCREEN_SIZE.width/32, Image.SCALE_SMOOTH));
+    private ImageIcon wQueenSelICO = new ImageIcon(getImageAsStream("/com/resources/images/WQueenSelect.png").getScaledInstance(SCREEN_SIZE.width/32, SCREEN_SIZE.width/32, Image.SCALE_SMOOTH));
+    private ImageIcon bQueenSelICO = new ImageIcon(getImageAsStream("/com/resources/images/BQueenSelect.png").getScaledInstance(SCREEN_SIZE.width/32, SCREEN_SIZE.width/32, Image.SCALE_SMOOTH));
+    private ImageIcon wKingSelICO = new ImageIcon(getImageAsStream("/com/resources/images/WKingSelect.png").getScaledInstance(SCREEN_SIZE.width/32, SCREEN_SIZE.width/32, Image.SCALE_SMOOTH));
+    private ImageIcon bKingSelICO = new ImageIcon(getImageAsStream("/com/resources/images/BKingSelect.png").getScaledInstance(SCREEN_SIZE.width/32, SCREEN_SIZE.width/32, Image.SCALE_SMOOTH));
+    private ImageIcon logoICO = new ImageIcon(getImageAsStream("/com/resources/images/ChessLogo.png").getScaledInstance(SCREEN_SIZE.width/3, SCREEN_SIZE.width/4, Image.SCALE_SMOOTH));
 
     //Player Objects
     private JLabel lastPlayerSelected;
@@ -68,33 +72,34 @@ public class Chess implements MouseListener, KeyListener, Rules {
     private JLabel[] king = new Players(2).playerCreator(wKingICO, bKingICO);
     private JLabel[] queen = new Players(18).playerCreator(wQueenICO, bQueenICO);
     private JLabel[] nullTile = new Players(64).playerCreator(nullTileICO, nullTileICO);
-    private JLabel[][] allPlayers = new JLabel[][] {pawn, bishop, rook, knight, king, queen};
+    private JLabel[][] allPlayers = new JLabel[][] {pawn, rook, bishop, knight, king, queen};
 
     public Chess() {
 
         nextNull = 0;
         promoting = false;
         whitesTurn = true; //Default starting player
+        background = getImageAsStream("/com/resources/images/Plain Green.jpg"); //Default background
 
-        jf = new JFrame("Chess");
+        jf = new JFrame("Java Chess");
         canvas = new DrawCanvas();
         canvas.setLayout(new GridBagLayout());
         gbc = new GridBagConstraints();
 
-        callMenu();
+        initMenu();
         JFrame.setDefaultLookAndFeelDecorated(true); // Make window appear as it would on the current OS
         jf.add(canvas);
         jf.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         jf.pack();
-        jf.setLocation(screenSize.width/2 - jf.getWidth()/2, screenSize.height/2 - jf.getHeight()/2);
+        jf.setMinimumSize(new Dimension(jf.getWidth(), jf.getHeight()));
+        jf.setLocation(SCREEN_SIZE.width/2 - jf.getWidth()/2, SCREEN_SIZE.height/2 - jf.getHeight()/2);
         jf.setResizable(false);
         jf.setVisible(true);
 
-        for (JLabel[] playerType : allPlayers)
+        for(JLabel[] playerType : allPlayers)
             onSelect(playerType.length, playerType);
 
-
-        for (int i = 0; i < nullTile.length; i++) {
+        for(int i = 0; i < nullTile.length; i++) {
             final int j = i;
             nullTile[i].addMouseListener(new MouseAdapter() {
                 public void mouseClicked(MouseEvent e) {
@@ -104,62 +109,7 @@ public class Chess implements MouseListener, KeyListener, Rules {
             });
         }
 
-        //Adds the ability to deselect objects using the escape key
-        KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {
-            @Override
-            public boolean dispatchKeyEvent(KeyEvent e) {
-                synchronized(Chess.class) {
-                    if (e.getID() == KeyEvent.KEY_RELEASED) {
-                        if (e.getKeyCode() == KeyEvent.VK_ESCAPE && playerState != 0) {
-
-                            switch (playerState) {
-                                case 1:
-                                    if (Arrays.asList(pawn).indexOf(lastPlayerSelected) >= pawn.length / 2)
-                                        lastPlayerSelected.setIcon(bPawnICO);
-                                    else
-                                        lastPlayerSelected.setIcon(wPawnICO);
-                                    break;
-                                case 2:
-                                    if (Arrays.asList(rook).indexOf(lastPlayerSelected) >= rook.length / 2)
-                                        lastPlayerSelected.setIcon(bRookICO);
-                                    else
-                                        lastPlayerSelected.setIcon(wRookICO);
-                                    break;
-                                case 3:
-                                    if (Arrays.asList(bishop).indexOf(lastPlayerSelected) >= bishop.length / 2)
-                                        lastPlayerSelected.setIcon(bBishopICO);
-                                    else
-                                        lastPlayerSelected.setIcon(wBishopICO);
-                                    break;
-                                case 4:
-                                    if (Arrays.asList(knight).indexOf(lastPlayerSelected) >= knight.length / 2)
-                                        lastPlayerSelected.setIcon(bKnightICO);
-                                    else
-                                        lastPlayerSelected.setIcon(wKnightICO);
-                                    break;
-                                case 5:
-                                    if (Arrays.asList(king).indexOf(lastPlayerSelected) >= king.length / 2)
-                                        lastPlayerSelected.setIcon(bKingICO);
-                                    else
-                                        lastPlayerSelected.setIcon(wKingICO);
-                                    break;
-                                case 6:
-                                    if (Arrays.asList(queen).indexOf(lastPlayerSelected) >= queen.length / 2)
-                                        lastPlayerSelected.setIcon(bQueenICO);
-                                    else
-                                        lastPlayerSelected.setIcon(wQueenICO);
-                                    break;
-                            }
-                        }
-                        jf.revalidate();
-                        canvas.repaint();
-                        playerState = 0;
-                    }
-                }
-                return true;
-            }
-        });
-
+        //Not a fan of all these hashmaps
         setState = new HashMap<>();
         setState.put(pawn, 1);
         setState.put(rook, 2);
@@ -196,37 +146,33 @@ public class Chess implements MouseListener, KeyListener, Rules {
     }
 
     /**
-     * Setup the main menu before the game actually starts
+     * Setup the main menu before the game starts.
+     * @since 2020-07-09
      */
-    public void callMenu() {
-
-        String[] boards = new String[10];
-        boards[0] = "Coral Reef";
-        boards[1] = "Drab";
-        boards[2] = "Neon City";
-        boards[3] = "Pastel";
-        boards[4] = "Plain Blue";
-        boards[5] = "Plain Green";
-        boards[6] = "Plain Red";
-        boards[7] = "Trick or Treat";
-        boards[8] = "Ultra Violet";
-        boards[9] = "World Famous Fries";
+    public void initMenu() {
 
         allBackgrounds = new Image[10];
-        allBackgrounds[0] = getImageAsStream("/com/resources/images/CoralReef.jpg");
-        allBackgrounds[1] = getImageAsStream("/com/resources/images/Drab.jpg");
-        allBackgrounds[2] = getImageAsStream("/com/resources/images/NeonCity.jpg");
-        allBackgrounds[3] = getImageAsStream("/com/resources/images/Pastel.jpg");
-        allBackgrounds[4] = getImageAsStream("/com/resources/images/PlainBlue.jpg");
-        allBackgrounds[5] = getImageAsStream("/com/resources/images/PlainGreen.jpg");
-        allBackgrounds[6] = getImageAsStream("/com/resources/images/PlainRed.jpg");
-        allBackgrounds[7] = getImageAsStream("/com/resources/images/TrickorTreat.jpg");
-        allBackgrounds[8] = getImageAsStream("/com/resources/images/UltraViolet.jpg");
-        allBackgrounds[9] = getImageAsStream("/com/resources/images/WorldFamousFries.jpg");
-        background = allBackgrounds[0]; //Default background
+        String[] boards = new String[10];
+        String[] bkrFilePaths = new String[10];
+        bkrFilePaths[0] = "/com/resources/images/Plain Green.jpg";
+        bkrFilePaths[1] = "/com/resources/images/Plain Blue.jpg";
+        bkrFilePaths[2] = "/com/resources/images/Plain Red.jpg";
+        bkrFilePaths[3] = "/com/resources/images/Drab.jpg";
+        bkrFilePaths[4] = "/com/resources/images/Coral Reef.jpg";
+        bkrFilePaths[5] = "/com/resources/images/Neon City.jpg";
+        bkrFilePaths[6] = "/com/resources/images/Pastel.jpg";
+        bkrFilePaths[7] = "/com/resources/images/Trick or Treat.jpg";
+        bkrFilePaths[8] = "/com/resources/images/Ultra Violet.jpg";
+        bkrFilePaths[9] = "/com/resources/images/World Famous Fries.jpg";
 
-        JComboBox<String> cBox = new JComboBox<>(boards);
-        cBox.addItemListener(new ItemListener() {
+        for(int i = 0; i < allBackgrounds.length; i++) {
+            allBackgrounds[i] = getImageAsStream(bkrFilePaths[i]);
+            boards[i] = bkrFilePaths[i].replace("/com/resources/images/", "");
+            boards[i] = boards[i].replace(".jpg", "");
+        }
+
+        JComboBox<String> bkrSelect = new JComboBox<>(boards);
+        bkrSelect.addItemListener(new ItemListener() {
 
             @Override
             public void itemStateChanged(ItemEvent e) {
@@ -243,8 +189,8 @@ public class Chess implements MouseListener, KeyListener, Rules {
             }
         });
 
-        JButton jb = new JButton("Start");
-        jb.addMouseListener(new MouseAdapter() {
+        JButton start = new JButton("Start");
+        start.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 System.out.println("Welcome to chess! The white player begins!\n");
                 canvas.removeAll();
@@ -256,6 +202,7 @@ public class Chess implements MouseListener, KeyListener, Rules {
         //Title screen component placements
         gbc.weightx = 1;
         gbc.weighty = 1;
+        gbc.anchor = GridBagConstraints.CENTER;
 
         gbc.gridx = 0;
         gbc.gridy = 0;
@@ -271,7 +218,7 @@ public class Chess implements MouseListener, KeyListener, Rules {
         gbc.ipadx = 150;
         gbc.ipady = 40;
         gbc.insets = new Insets(300, 0, 0, 0);
-        canvas.add(jb, gbc);
+        canvas.add(start, gbc);
 
         gbc.gridx = 3;
         gbc.gridy = 1;
@@ -279,16 +226,19 @@ public class Chess implements MouseListener, KeyListener, Rules {
         gbc.ipadx = 90;
         gbc.ipady = 10;
         gbc.insets = new Insets(300, 0, 0, 0);
-        canvas.add(cBox, gbc);
+        canvas.add(bkrSelect, gbc);
     }
 
-    //Refresh values which change due to scalability
+    /**
+     * Refresh values which change due to scalability
+     * @since 2020-07-09
+     */
     public void refresh() {
         //Content pane does not include border size
         tileWidth = jf.getContentPane().getWidth()/8;
         tileHeight = jf.getContentPane().getHeight()/8;
         coorX = coordinates.get(((tileWidth*8) - lastPlayerSelected.getX())/tileWidth);
-        coorY = (((tileHeight*9) - lastPlayerSelected.getY())/tileHeight);
+        coorY = ((tileHeight*9) - lastPlayerSelected.getY())/tileHeight;
     }
 
     //Adds players to board
@@ -320,28 +270,9 @@ public class Chess implements MouseListener, KeyListener, Rules {
         gbc.gridx = 7;
         canvas.add(rook[1], gbc);
 
-        for (int i = 0; i < pawn.length/2; i++) {
-            gbc.gridx = i;
-            gbc.gridy = 1;
-            canvas.add(pawn[i], gbc);
-        }
-
-        for (int i = 0; i < 4; i++) {
-            for (int j = 0; j < 8; j++) {
-                gbc.gridx = j;
-                gbc.gridy = i + 2;
-                canvas.add(nullTile[nextNull++], gbc);
-            }
-        }
-
-        for (int i = pawn.length/2; i < pawn.length; i++) {
-            gbc.gridx = i - (pawn.length/2);
-            gbc.gridy = 6;
-            canvas.add(pawn[i], gbc);
-        }
-
         gbc.gridx = 0;
         gbc.gridy = 7;
+
         canvas.add(rook[10], gbc);
         gbc.gridx = 1;
         canvas.add(knight[10], gbc);
@@ -358,10 +289,32 @@ public class Chess implements MouseListener, KeyListener, Rules {
         gbc.gridx = 7;
         canvas.add(rook[11], gbc);
 
+        int n = 0;
+        for(int j = 1; j <= 6; j+=5) {
+            for (int i = 0; i < pawn.length/2; i++) {
+                gbc.gridx = i;
+                gbc.gridy = j;
+                canvas.add(pawn[n++], gbc);
+            }
+        }
+
+        for (int i = 0; i < 4; i++) {
+            for (int j = 0; j < 8; j++) {
+                gbc.gridx = j;
+                gbc.gridy = i + 2;
+                canvas.add(nullTile[nextNull++], gbc);
+            }
+        }
         jf.revalidate();
         jf.repaint();
     }
 
+    /**
+     * Images must be obtained as an InputStream using a classLocator in order to build the .jar file
+     * @since 2020-07-09
+     * @param filePath: The path to obtain a given image file
+     * @return Returns an Image object
+     */
     public Image getImageAsStream(String filePath) {
         try {
             InputStream is = getClass().getResourceAsStream(filePath);
@@ -371,7 +324,78 @@ public class Chess implements MouseListener, KeyListener, Rules {
             return null;
         }
     }
-    // Add Event Listeners to all players
+
+    /**
+     * Images must be obtained as an InputStream using a classLocator in order to build the .jar file
+     * @since 2020-07-09
+     */
+    public void swapIcon() {
+        switch(playerState) {
+            case 1:
+                if(lastPlayerSelected.getIcon() == bPawnICO)
+                    lastPlayerSelected.setIcon(bPawnSelICO);
+                else if(lastPlayerSelected.getIcon() == bPawnSelICO)
+                    lastPlayerSelected.setIcon(bPawnICO);
+                else if(lastPlayerSelected.getIcon() == wPawnICO)
+                    lastPlayerSelected.setIcon(wPawnSelICO);
+                else lastPlayerSelected.setIcon(wPawnICO);
+                break;
+            case 2:
+                if(lastPlayerSelected.getIcon() == bRookICO)
+                    lastPlayerSelected.setIcon(bRookSelICO);
+                else if(lastPlayerSelected.getIcon() == bRookSelICO)
+                    lastPlayerSelected.setIcon(bRookICO);
+                else if(lastPlayerSelected.getIcon() == wRookICO)
+                    lastPlayerSelected.setIcon(wRookSelICO);
+                else lastPlayerSelected.setIcon(wRookICO);
+                break;
+            case 3:
+                if(lastPlayerSelected.getIcon() == bBishopICO)
+                    lastPlayerSelected.setIcon(bBishopSelICO);
+                else if(lastPlayerSelected.getIcon() == bBishopSelICO)
+                    lastPlayerSelected.setIcon(bBishopICO);
+                else if(lastPlayerSelected.getIcon() == wBishopICO)
+                    lastPlayerSelected.setIcon(wBishopSelICO);
+                else lastPlayerSelected.setIcon(wBishopICO);
+                break;
+            case 4:
+                if(lastPlayerSelected.getIcon() == bKnightICO)
+                    lastPlayerSelected.setIcon(bKnightSelICO);
+                else if(lastPlayerSelected.getIcon() == bKnightSelICO)
+                    lastPlayerSelected.setIcon(bKnightICO);
+                else if(lastPlayerSelected.getIcon() == wKnightICO)
+                    lastPlayerSelected.setIcon(wKnightSelICO);
+                else lastPlayerSelected.setIcon(wKnightICO);
+                break;
+            case 5:
+                if(lastPlayerSelected.getIcon() == bKingICO)
+                    lastPlayerSelected.setIcon(bKingSelICO);
+                else if(lastPlayerSelected.getIcon() == bKingSelICO)
+                    lastPlayerSelected.setIcon(bKingICO);
+                else if(lastPlayerSelected.getIcon() == wKingICO)
+                    lastPlayerSelected.setIcon(wKingSelICO);
+                else lastPlayerSelected.setIcon(wKingICO);
+                break;
+            case 6:
+                if(lastPlayerSelected.getIcon() == bQueenICO)
+                    lastPlayerSelected.setIcon(bQueenSelICO);
+                else if(lastPlayerSelected.getIcon() == bQueenSelICO)
+                    lastPlayerSelected.setIcon(bQueenICO);
+                else if(lastPlayerSelected.getIcon() == wQueenICO)
+                    lastPlayerSelected.setIcon(wQueenSelICO);
+                else lastPlayerSelected.setIcon(wQueenICO);
+                break;
+        }
+        jf.validate();
+        canvas.repaint();
+    }
+
+    /**
+     * Add Event Listeners to all players
+     * @since 2020-07-09
+     * @param playerSize: The amount of players given a player type
+     * @param selectedPlayer: The given player-type
+     */
     public void onSelect(int playerSize, JLabel[] selectedPlayer) {
 
         for (int i = 0; i < playerSize; i++) {
@@ -386,47 +410,7 @@ public class Chess implements MouseListener, KeyListener, Rules {
                         String s = (whitesTurn) ? "White" : "Black";
                         String p = parentName.get(playerState);
                         System.out.println(s + " selected " + p + " at: " + coorX + coorY + "\n");
-
-                        switch(playerState) {
-                            case 1:
-                                if (Arrays.asList(pawn).indexOf(lastPlayerSelected) >= pawn.length/2)
-                                    lastPlayerSelected.setIcon(bPawnSelICO);
-                                else
-                                    lastPlayerSelected.setIcon(wPawnSelICO);
-                                break;
-                            case 2:
-                                if (Arrays.asList(rook).indexOf(lastPlayerSelected) >= rook.length/2)
-                                    lastPlayerSelected.setIcon(bRookSelICO);
-                                else
-                                    lastPlayerSelected.setIcon(wRookSelICO);
-                                break;
-                            case 3:
-                                if (Arrays.asList(bishop).indexOf(lastPlayerSelected) >= bishop.length/2)
-                                    lastPlayerSelected.setIcon(bBishopSelICO);
-                                else
-                                    lastPlayerSelected.setIcon(wBishopSelICO);
-                                break;
-                            case 4:
-                                if (Arrays.asList(knight).indexOf(lastPlayerSelected) >= knight.length/2)
-                                    lastPlayerSelected.setIcon(bKnightSelICO);
-                                else
-                                    lastPlayerSelected.setIcon(wKnightSelICO);
-                                break;
-                            case 5:
-                                if (Arrays.asList(king).indexOf(lastPlayerSelected) >= king.length/2)
-                                    lastPlayerSelected.setIcon(bKingSelICO);
-                                else
-                                    lastPlayerSelected.setIcon(wKingSelICO);
-                                break;
-                            case 6:
-                                if (Arrays.asList(queen).indexOf(lastPlayerSelected) >= queen.length/2)
-                                    lastPlayerSelected.setIcon(bQueenSelICO);
-                                else
-                                    lastPlayerSelected.setIcon(wQueenSelICO);
-                                break;
-                        }
-                        jf.validate();
-                        canvas.repaint();
+                        swapIcon();
                     }
                     else
                         onMove(selectedPlayer, selectedPlayer[j], true);
@@ -435,54 +419,22 @@ public class Chess implements MouseListener, KeyListener, Rules {
         }
     }
 
-    //Calls ruleSet and decides new placement of players
+    /**
+     * Calls ruleSet and decides new placement of players
+     * @since 2020-07-09
+     * @param underAttackLabel: The player-type/parent of the opponent under attack
+     * @param underAttack: The specific opponent under attack
+     * @param isPlayer: States whether or not the "opponent" is truly an opponent, or a blank tile
+     */
     public void onMove(JLabel[] underAttackLabel, JLabel underAttack, boolean isPlayer) {
 
         if(isPlayer)
             refresh();
         clickX = underAttack.getX();
         clickY = underAttack.getY();
+        swapIcon();
 
-        switch (playerState) {
-            case 1:
-                if (Arrays.asList(pawn).indexOf(lastPlayerSelected) >= pawn.length/2)
-                    lastPlayerSelected.setIcon(bPawnICO);
-                else
-                    lastPlayerSelected.setIcon(wPawnICO);
-                break;
-            case 2:
-                if (Arrays.asList(rook).indexOf(lastPlayerSelected) >= rook.length/2)
-                    lastPlayerSelected.setIcon(bRookICO);
-                else
-                    lastPlayerSelected.setIcon(wRookICO);
-                break;
-            case 3:
-                if (Arrays.asList(bishop).indexOf(lastPlayerSelected) >= bishop.length/2)
-                    lastPlayerSelected.setIcon(bBishopICO);
-                else
-                    lastPlayerSelected.setIcon(wBishopICO);
-                break;
-            case 4:
-                if (Arrays.asList(knight).indexOf(lastPlayerSelected) >= knight.length/2)
-                    lastPlayerSelected.setIcon(bKnightICO);
-                else
-                    lastPlayerSelected.setIcon(wKnightICO);
-                break;
-            case 5:
-                if (Arrays.asList(king).indexOf(lastPlayerSelected) >= king.length/2)
-                    lastPlayerSelected.setIcon(bKingICO);
-                else
-                    lastPlayerSelected.setIcon(wKingICO);
-                break;
-            case 6:
-                if (Arrays.asList(queen).indexOf(lastPlayerSelected) >= queen.length/2)
-                    lastPlayerSelected.setIcon(bQueenICO);
-                else
-                    lastPlayerSelected.setIcon(wQueenICO);
-                break;
-        }
-
-        chooseRuleSet(isPlayer);
+        //This is awful
         //If player being attacked and last player selected are on the same team, return false
         try {
             if(Arrays.asList(parentLabel.get(playerState)).indexOf(lastPlayerSelected) < parentLabel.get(playerState).length/2 && Arrays.asList(underAttackLabel).indexOf(underAttack) < underAttackLabel.length/2 && underAttackLabel != nullTile
@@ -491,14 +443,14 @@ public class Chess implements MouseListener, KeyListener, Rules {
                     System.out.println("I'm not your enemy!\n");
                 isValid = false;
             }
-        }
-        catch(NullPointerException ignored){}
+            else chooseRuleSet(isPlayer);
+        } catch(NullPointerException ignored){}
 
         if(isValid && underAttack != lastPlayerSelected) {
 
             refresh();
-            if(whitesTurn && parentLabel.get(playerState) == pawn && underAttack.getY() > tileHeight*7
-                    || !whitesTurn && underAttack.getY() < tileHeight && parentLabel.get(playerState) == pawn)
+            if(whitesTurn && parentLabel.get(playerState) == pawn && underAttack.getY() > tileHeight*7 && underAttackLabel != king
+                    || !whitesTurn && underAttack.getY() < tileHeight && parentLabel.get(playerState) == pawn && underAttackLabel != king)
                 promotePawn();
 
             clickX = lastPlayerSelected.getX()/tileWidth;
@@ -517,22 +469,26 @@ public class Chess implements MouseListener, KeyListener, Rules {
                 System.out.println(s + " conquered the opponent's " + p + "\n");
 
                 if(underAttack == king[0] || underAttack == king[1]) {
-                    System.out.println(s + " wins!\n");
                     canvas.removeAll();
-                    JButton jb = new JButton("Play Again?");
-                    jb.addMouseListener(new MouseAdapter() {
+                    JLabel winner = new JLabel(s + " wins!");
+                    JButton playAgain = new JButton("Play Again?");
+                    playAgain.addMouseListener(new MouseAdapter() {
                         public void mouseClicked(MouseEvent e) {
+                            whitesTurn = true;
                             nextNull = 0;
                             canvas.removeAll();
-                            callMenu();
+                            initMenu();
                             jf.revalidate();
                             canvas.repaint();
                         }
                     });
-                    gbc.ipadx = 160;
-                    gbc.ipady = 50;
-                    gbc.anchor = GridBagConstraints.CENTER;
-                    canvas.add(jb, gbc);
+                    winner.setFont(new Font("SansSerif", Font.PLAIN, 32));
+                    gbc.gridy = 0;
+                    gbc.anchor = GridBagConstraints.PAGE_END;
+                    canvas.add(winner, gbc);
+                    gbc.gridy = 1;
+                    gbc.anchor = GridBagConstraints.PAGE_START;
+                    canvas.add(playAgain, gbc);
                     jf.revalidate();
                     canvas.repaint();
                 }
@@ -548,15 +504,16 @@ public class Chess implements MouseListener, KeyListener, Rules {
             }
             whitesTurn = !whitesTurn;
         }
-
         jf.validate();
         jf.repaint();
         playerState = 0;
         isValid = false;
     }
 
+    /**
+     * Anonymous inner class used for drawing the background
+     */
     class DrawCanvas extends JComponent {
-
         @Override
         public void paintComponent(Graphics g) {
             super.paintComponent(g); //Override g in Graphics class to avoid bugs
@@ -564,9 +521,12 @@ public class Chess implements MouseListener, KeyListener, Rules {
         }
     }
 
-    //Rules
+    /**
+     * Chooses the appropriate rule-set for validating moves based on the current playerState
+     * @since 2020-07-09
+     * @param isPlayer: States whether or not the "opponent" is truly an opponent, or a blank tile
+     */
     public void chooseRuleSet(boolean isPlayer) {
-
         switch (playerState) {
             case 1:
                 if(Arrays.asList(pawn).indexOf(lastPlayerSelected) >= pawn.length/2)
@@ -591,67 +551,70 @@ public class Chess implements MouseListener, KeyListener, Rules {
         }
     }
 
+    /**
+     * Used for promoting pawns to either queen, bishop, rook, or knight if they reach the opposite side of the board
+     * @since 2020-07-09
+     */
     public void promotePawn() {
 
-        final JPanel glassPane = (JPanel) jf.getGlassPane();
-        glassPane.setVisible(true);
         promoting = true;
+        String s = (whitesTurn) ? "White's" : "Black's";
+        JLabel promotionText = new JLabel(s +" pawn may be promoted");
+        promotionText.setFont(new Font("SansSerif", Font.PLAIN, 25));
         String[] allPlayerNames = new String[]{"", "queen", "bishop", "knight", "rook"};
+        JComboBox<String> promoBox = new JComboBox<>(allPlayerNames);
+        JFrame promoFrame = new JFrame();
+        GridBagConstraints pfConstraints = new GridBagConstraints();
+        promoFrame.setLayout(new GridBagLayout());
+        promoFrame.setVisible(true);
+        promoFrame.setResizable(false);
 
-        JComboBox<String> cBox = new JComboBox<>(allPlayerNames);
-        cBox.addItemListener(new ItemListener() {
+        promoBox.addItemListener(new ItemListener() {
             @Override
             public void itemStateChanged(ItemEvent e) {
                 if(e.getStateChange() == ItemEvent.SELECTED) {
                     String selection = e.getItem().toString();
                     for(JLabel[] playerType : allPlayers) {
                         if(selection.equals(parentName.get(setState.get(playerType)))) {
-                            //Turns are reversed when this function is called
-                            if(whitesTurn) {
-                                for(int i = playerType.length/2; i < playerType.length; i++) {
-                                    if(playerType[i].getParent() == null) {
-                                        System.out.println("Player's pawn has become a " + selection + "\n");
-                                        gbc.gridx = lastPlayerSelected.getX()/tileWidth;
-                                        gbc.gridy = lastPlayerSelected.getY()/tileHeight;
-                                        canvas.remove(lastPlayerSelected);
-                                        lastPlayerSelected = playerType[i];
-                                        canvas.add(lastPlayerSelected, gbc);
-                                        break;
-                                    }
-                                }
-                            }
-                            else {
-                                for(int i = 0; i < playerType.length/2; i++) {
-                                    if(playerType[i].getParent() == null) {
-                                        System.out.println("Player's pawn has become a " + selection + "\n");
-                                        gbc.gridx = lastPlayerSelected.getX()/tileWidth;
-                                        gbc.gridy = lastPlayerSelected.getY()/tileHeight;
-                                        canvas.remove(lastPlayerSelected);
-                                        lastPlayerSelected = playerType[i];
-                                        canvas.add(lastPlayerSelected, gbc);
-                                        break;
-                                    }
+                            int i = 0;
+                            if(whitesTurn) i = playerType.length/2;
+                            for(; i < playerType.length; i++) {
+                                if(playerType[i].getParent() == null) {
+                                    System.out.println("Player's pawn has become a " + selection + "\n");
+                                    gbc.gridx = lastPlayerSelected.getX()/tileWidth;
+                                    gbc.gridy = lastPlayerSelected.getY()/tileHeight;
+                                    canvas.remove(lastPlayerSelected);
+                                    lastPlayerSelected = playerType[i];
+                                    canvas.add(lastPlayerSelected, gbc);
+                                    break;
                                 }
                             }
                         }
                     }
-                    promoting = false;
-                    glassPane.remove(cBox);
-                    glassPane.setVisible(false);
-                    jf.revalidate();
-                    canvas.repaint();
                 }
+                promoting = false;
+                promoFrame.dispose();
+                jf.revalidate();
+                canvas.repaint();
             }
         });
-
-        glassPane.setLayout(new GridBagLayout());
-        GridBagConstraints menuConstraints = new GridBagConstraints();
-        glassPane.add(cBox, menuConstraints);
-        jf.revalidate();
-        canvas.repaint();
+        pfConstraints.gridy = 0;
+        pfConstraints.insets = new Insets(SCREEN_SIZE.height/10, 0, 0, 0);
+        pfConstraints.anchor = GridBagConstraints.PAGE_END;
+        promoFrame.add(promotionText, pfConstraints);
+        pfConstraints.gridy = 1;
+        pfConstraints.insets = new Insets(0, 0, SCREEN_SIZE.height/10, 0);
+        pfConstraints.anchor = GridBagConstraints.PAGE_START;
+        promoFrame.add(promoBox, pfConstraints);
+        promoFrame.pack();
+        promoFrame.setLocation(SCREEN_SIZE.width/2 - promoFrame.getWidth()/2, SCREEN_SIZE.height/2 - promoFrame.getHeight()/2);
     }
 
-    //Checks for players between click and LPS
+    /**
+     * Checks for any players between the lastPlayerSelected and their new move location
+     * ie. checks if the user is attempting to skip over another player
+     * @since 2020-07-09
+     */
     public boolean checkSkip() {
 
         int lpsX = lastPlayerSelected.getX();
@@ -742,7 +705,7 @@ public class Chess implements MouseListener, KeyListener, Rules {
             }
         }
         else if(clickX < lpsX) {
-            for(int x = lpsX-tileWidth; x > clickX; x-=tileWidth){
+            for(int x = lpsX-tileWidth; x > clickX; x-=tileWidth) {
                 for(JLabel[] jl : allPlayers) {
                     for(JLabel p : jl) {
                         if(p.getParent() != null && p.getX() == x && p.getY() == lpsY - ((lpsX-x)/tileWidth)*tileHeight) {
@@ -935,11 +898,7 @@ public class Chess implements MouseListener, KeyListener, Rules {
         return true;
     }
 
-    /**
-     * Main method for entire project. Run JFrame in new thread do avoid deadlock
-     */
     public static void main(String[] args) {
-
         SwingUtilities.invokeLater(new Runnable() {
             @Override
             public void run() {
@@ -947,27 +906,5 @@ public class Chess implements MouseListener, KeyListener, Rules {
             }
         });
     }
-
-    /************UNUSED INTERFACE METHODS**************/
-
-    //MouseListener
-    @Override
-    public void mouseClicked(MouseEvent arg0) {}
-    @Override
-    public void mouseEntered(MouseEvent arg0) {}
-    @Override
-    public void mouseExited(MouseEvent arg0) {}
-    @Override
-    public void mousePressed(MouseEvent arg0) {}
-    @Override
-    public void mouseReleased(MouseEvent arg0) {}
-
-    //KeyListener
-    @Override
-    public void keyPressed(KeyEvent arg0) {}
-    @Override
-    public void keyReleased(KeyEvent arg0) {}
-    @Override
-    public void keyTyped(KeyEvent arg0) {}
 }
 
