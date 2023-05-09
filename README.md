@@ -11,7 +11,7 @@ it from the command line (java -jar Chess/out/artifacts/JavaChess_jar/JavaChess.
 # Images
 
 <div>
-    <img src="./img/start_menu_1.png" width="44%" alt="Splash Screen (Green)"/>
-    <img src="./img/start_menu_2.png" width="44%" alt="Splash Screen (Drab)"/>
+    <img src="./img/start_menu_1.png" width="49%" alt="Splash Screen (Green)"/>
+    <img src="./img/start_menu_2.png" width="49%" alt="Splash Screen (Drab)"/>
 </div>
 <img src="./img/gameplay.png" alt="Gameplay"/>
