@@ -10,6 +10,6 @@ it from the command line (java -jar Chess/out/artifacts/JavaChess_jar/JavaChess.
 
 # Images
 
-<img src="./img/start_menu_1.png" width="45%" alt="Splash Screen (Green)"/>
-<img src="./img/start_menu_2.png" width="45%" alt="Splash Screen (Drab)"/>
+<img src="./img/start_menu_1.png" width="44%" alt="Splash Screen (Green)"/>
+<img src="./img/start_menu_2.png" width="44%" alt="Splash Screen (Drab)"/>
 <img src="./img/gameplay.png" alt="Gameplay"/>
