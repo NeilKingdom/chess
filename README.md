@@ -1,6 +1,9 @@
 # Chess
 
-Experience the millenium-old game of Chess 
+Experience the millenium-old game of Chess in an objectively inferior way! Very limited in scope - 
+this was one of my first personal projects: recreating Chess using Java's Swing GUI widget toolkit. 
+No online multiplayer here; just poor hitboxes and event output sent to stdout rather than a real 
+text pane.
 
 # Installation
 
