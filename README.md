@@ -1,8 +1,8 @@
 # Chess
 
-Experience the millenium-old game of Chess in an objectively inferior way! Very limited in scope - 
-this was one of my first personal projects: recreating Chess using Java's Swing GUI widget toolkit. 
-No online multiplayer here; just poor hitboxes and event output sent to stdout rather than a real 
+Experience the millenium-old game of Chess in an objectively inferior way! Very limited in scope -
+this was one of my first personal projects: recreating Chess using Java's Swing GUI widget toolkit.
+No online multiplayer here; just poor hitboxes and event output sent to stdout rather than a real
 text pane.
 
 # Installation
@@ -14,7 +14,18 @@ it from the command line (java -jar Chess/out/artifacts/JavaChess_jar/JavaChess.
 # Images
 
 <div>
-    <img src="./img/start_menu_1.png" width="49%" alt="Splash Screen (Green)"/>
-    <img src="./img/start_menu_2.png" width="49%" alt="Splash Screen (Drab)"/>
+    <img
+        src="https://www.neilkingdom.xyz/static/images/git/chess/start_menu_1.png"
+        width="49%"
+        alt="Splash Screen (Green)"
+    />
+    <img
+        src="https://www.neilkingdom.xyz/static/images/git/chess/start_menu_2.png"
+        width="49%"
+        alt="Splash Screen (Drab)"
+    />
 </div>
-<img src="./img/gameplay.png" alt="Gameplay"/>
+<img
+    src="https://www.neilkingdom.xyz/static/images/git/chess/gameplay.png"
+    alt="Gameplay"
+/>
