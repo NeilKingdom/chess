@@ -15,20 +15,6 @@ this was one of my first personal projects: recreating Chess using Java's Swing 
 No online multiplayer here; just poor hitboxes and event output sent to stdout rather than a real
 text pane.
 
-# Running the application
-
-To run the application, simply execute the shell script provided
-
-```console
-./run.sh
-```
-
-I can't be bothered to port the script to Windows, but it should be pretty straightforward since most of the
-Java command line tools are cross platform. The script will build the jar file and place it in the build
-directory. It will also compile the javadoc comments located in ./src/assets/javadoc.
-
-# Images
-
 <div>
     <img
         src="https://www.neilkingdom.xyz/static/images/git/chess/start_menu_1.png"
@@ -45,3 +31,15 @@ directory. It will also compile the javadoc comments located in ./src/assets/jav
     src="https://www.neilkingdom.xyz/static/images/git/chess/gameplay.png"
     alt="Gameplay"
 />
+
+# Running the application
+
+To run the application, simply execute the shell script provided
+
+```console
+./run.sh
+```
+
+I can't be bothered to port the script to Windows, but it should be pretty straightforward since most of the
+Java command line tools are cross platform. The script will build the jar file and place it in the build
+directory. It will also compile the javadoc comments located in ./src/assets/javadoc.
