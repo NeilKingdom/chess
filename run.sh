@@ -1,18 +1,19 @@
 #!/bin/sh
 
-if [ -d "classes" ]; then
-    rm -rf classes/*
-else
-    mkdir classes
-fi
+CLASS_DIR="classes"
+BUILD_DIR="build"
 
-if [ -f "build/Chess.jar" ]; then
-    rm build/Chess.jar
-else
-    mkdir build
-fi
+[ -d "$CLASS_DIR" ] && rm -rf "$CLASS_DIR"
+mkdir "$CLASS_DIR"
 
-javac -d classes ./src/chess/*.java
-jar -cMf ./build/Chess.jar -C classes . -C src/assets/images .
-javadoc -d ./src/assets/javadoc -sourcepath ./src -subpackages chess > /dev/null 2>&1
-java -cp build/Chess.jar chess/Chess
+[ -d "$BUILD_DIR" ] && rm -rf "$BUILD_DIR"
+mkdir "$BUILD_DIR"
+
+# Compile
+javac -d "$CLASS_DIR" src/chess/*.java
+# Pack JAR
+jar -cMf "${BUILD_DIR}/Chess.jar" -C "$CLASS_DIR" . -C src/assets/images .
+# Generate javadoc
+javadoc -d src/assets/javadoc -sourcepath src -subpackages chess > /dev/null 2>&1
+# Run
+java -cp "${BUILD_DIR}/Chess.jar" chess/Chess
