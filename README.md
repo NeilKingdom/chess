@@ -6,12 +6,12 @@
  \___|_| |_|\___||___/___/
 ```
 
-✝️ This software was written in the name of the __Father__ and of the __Son__ and of the __Holy Spirit__; Amen.
+---
 
 # About
 
-Experience the millenium-old game of Chess in an objectively inferior way! Very limited in scope -
-this was one of my first personal projects: recreating Chess using Java's Swing GUI widget toolkit.
+Experience the millenium-old game of Chess in an objectively inferior way! Very limited in scope,
+this was one of my first personal projects - recreating Chess using Java's Swing GUI/widget toolkit.
 No online multiplayer here; just poor hitboxes and event output sent to stdout rather than a real
 text pane.
 
@@ -32,14 +32,18 @@ text pane.
     alt="Gameplay"
 />
 
-# Running the application
+# Dependencies
 
-To run the application, simply execute the shell script provided
+Recommended Java 8 or higher.
 
-```console
-./run.sh
-```
+# Usage
 
-I can't be bothered to port the script to Windows, but it should be pretty straightforward since most of the
-Java command line tools are cross platform. The script will build the jar file and place it in the build
-directory. It will also compile the javadoc comments located in ./src/assets/javadoc.
+If on Windows, execute run.bat in a CMD prompt. If on Mac or Linux, execute run.sh from a shell.
+
+---
+
+# Acknowledging Our Lord
+
+✝ May these works glorify and honour Christ, our Lord ✝
+
+_“So whether you eat or drink or whatever you do, do it all for the glory of God.”_ – 1 Corinthians 10:31
