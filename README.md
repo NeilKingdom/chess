@@ -17,18 +17,18 @@ text pane.
 
 <div>
     <img
-        src="https://www.neilkingdom.xyz/static/images/git/chess/start_menu_1.png"
+        src="https://www.neilkingdom.xyz/public/git/chess/start_menu_1.png"
         width="49%"
         alt="Splash Screen (Green)"
     />
     <img
-        src="https://www.neilkingdom.xyz/static/images/git/chess/start_menu_2.png"
+        src="https://www.neilkingdom.xyz/public/git/chess/start_menu_2.png"
         width="49%"
         alt="Splash Screen (Drab)"
     />
 </div>
 <img
-    src="https://www.neilkingdom.xyz/static/images/git/chess/gameplay.png"
+    src="https://www.neilkingdom.xyz/public/git/chess/gameplay.png"
     alt="Gameplay"
 />
 
